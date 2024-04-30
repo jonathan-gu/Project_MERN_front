@@ -1,20 +1,11 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
+import { AppBar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from "@mui/material";
 import AdbIcon from '@mui/icons-material/Adb';
-import { AccountCircle } from '@mui/icons-material';
+import MenuIcon from '@mui/icons-material/Menu';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import React from "react";
+import "./NavBar.css"
 
-const pages = ['Événéments'];
+const pages = [{ label: 'Ajouter un événement', link: '/addEvent' }, { label: 'Liste des événement', link: '/' }];
 const settings = ['Déconnexion'];
 
 function ResponsiveAppBar() {
@@ -40,6 +31,24 @@ function ResponsiveAppBar() {
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
+          <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            href="/"
+            sx={{
+              mr: 2,
+              display: { xs: 'none', md: 'flex' },
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.0.5rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            EventManager
+          </Typography>
+
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -70,8 +79,8 @@ function ResponsiveAppBar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                <MenuItem key={page.label} onClick={handleCloseNavMenu}>
+                  <Typography component="a" href={page.link} textAlign="center">{page.label}</Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -80,42 +89,36 @@ function ResponsiveAppBar() {
             variant="h5"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="/"
             sx={{
               mr: 2,
               display: { xs: 'flex', md: 'none' },
               flexGrow: 1,
               fontFamily: 'monospace',
-              fontWeight: 400,
+              fontWeight: 700,
               letterSpacing: '.0.5rem',
               color: 'inherit',
               textDecoration: 'none',
             }}
           >
-            Gestionnaire d'événements
+            EventManager
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
-              <Button
-                key={page}
+              <Button component="a"
+              href={page.link}
+                key={page.label}
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                {page}
+                {page.label}
               </Button>
             ))}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
-              <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleOpenUserMenu} sx={{ p: 0 }}
-                color="inherit"
-              >
+              <IconButton color="inherit" onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <AccountCircle />
               </IconButton>
             </Tooltip>
