@@ -1,0 +1,9 @@
+.card {
+    margin-top: 50px;
+    max-width: 80%;
+}
+
+.backgroundEvent {
+    background-color: #888888;
+    height: 300px;
+}

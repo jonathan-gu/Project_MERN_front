@@ -1,7 +1,8 @@
-import { Button, Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
+import { Button, Card, CardActions, CardContent, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import Event from "../../models/event";
 import "./HomePage.css"
+import { Link } from "react-router-dom";
 
 const HomePage = () => {
     const [events, setEvents] = useState<Event[]>([])
@@ -13,9 +14,8 @@ const HomePage = () => {
                 const responseData = await response.json();
                 if (responseData.payload && Array.isArray(responseData.payload)) {
                     const eventsGet: Event[] = responseData.payload.map((event: any) => {
-                        return new Event(event.title, event.description, event.city, event.date, event.type, event.users);
+                        return new Event(event._id, event.title, event.description, event.city, event.date, event.type, event.users);
                     });
-                    console.log(eventsGet)
                     setEvents(eventsGet);
                 } else {
                     console.error("Payload is undefined or not an array");
@@ -58,7 +58,7 @@ const HomePage = () => {
                         </Typography>
                     </CardContent>
                     <CardActions>
-                        <Button size="small">Plus d'informations</Button>
+                        <Button component={Link} to={"/event/" + event._id} size="small">Plus d'informations</Button>
                     </CardActions>
                 </Card>
             )}
