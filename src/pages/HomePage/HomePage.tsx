@@ -1,4 +1,4 @@
-import { Button, Card, CardActions, CardContent, Typography } from "@mui/material";
+import { Button, Card, CardActions, CardContent, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import Event from "../../models/event";
 import "./HomePage.css"
@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 
 const HomePage = () => {
     const [events, setEvents] = useState<Event[]>([])
+    const [sortBy, setSortBy] = useState<string>('');
 
     useEffect(() => {
         async function getEvents () {
@@ -37,32 +38,59 @@ const HomePage = () => {
         return `${day}/${month}/${year}`;
     };
 
+    const handleSortChange = (event: SelectChangeEvent<unknown>) => {
+        setSortBy(event.target.value as string);
+        sortEvents(event.target.value as string);
+    };
+
+    const sortEvents = (sortBy: string) => {
+        const sortedEvents = [...events];
+        if (sortBy === 'date') {
+            sortedEvents.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        } else if (sortBy === 'type') {
+            sortedEvents.sort((a, b) => a.type.localeCompare(b.type.toString()));
+        } else if (sortBy === 'popularity') {
+            sortedEvents.sort((a, b) => a.users.length - b.users.length);
+        }
+        setEvents(sortedEvents);
+    };
+
     return (
-        <div className="events">
-            {events.map((event, index) =>
-                <Card className="card" key={index} sx={{ maxWidth: 345 }}>
-                    {/* <CardMedia component="img" alt="green iguana" height="140" /> */}
-                    <div className="background"></div>
-                    <CardContent>
-                        <Typography gutterBottom variant="h5" component="div">
-                            {event.title}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            Ville : {event.city}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            Type : {event.type}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            Date : {formatDate(event.date)}
-                        </Typography>
-                    </CardContent>
-                    <CardActions>
-                        <Button component={Link} to={"/event/" + event._id} size="small">Plus d'informations</Button>
-                    </CardActions>
-                </Card>
-            )}
-        </div>
+        <>
+            <FormControl className="select">
+                <InputLabel id="demo-simple-select-label">Type</InputLabel>
+                <Select labelId="demo-simple-select-label" id="demo-simple-select" label="Age" onChange={handleSortChange}>
+                    <MenuItem value="date">Date</MenuItem>
+                    <MenuItem value="type">Type</MenuItem>
+                    <MenuItem value="popularity">Popularity</MenuItem>
+                </Select>
+            </FormControl>
+            <div className="events">
+                {events.map((event, index) =>
+                    <Card className="card" key={index} sx={{ maxWidth: 345 }}>
+                        {/* <CardMedia component="img" alt="green iguana" height="140" /> */}
+                        <div className="background"></div>
+                        <CardContent>
+                            <Typography gutterBottom variant="h5" component="div">
+                                {event.title}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                Ville : {event.city}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                Type : {event.type}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                Date : {formatDate(event.date)}
+                            </Typography>
+                        </CardContent>
+                        <CardActions>
+                            <Button component={Link} to={"/event/" + event._id} size="small">Plus d'informations</Button>
+                        </CardActions>
+                    </Card>
+                )}
+            </div>
+        </>
     )
 }
 
