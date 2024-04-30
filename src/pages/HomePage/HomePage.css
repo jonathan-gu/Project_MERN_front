@@ -1,8 +1,16 @@
 .events {
-    justify-content: center;
     display: grid;
-    grid-auto-rows: minmax(100px, auto);
-    grid-gap: 10px;
-    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 50px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    margin: 50px 50px;
+}
+
+.card {
+    margin: 10px auto;
     width: 100%;
+}
+
+.background {
+    background-color: #888888;
+    height: 140px;
 }
