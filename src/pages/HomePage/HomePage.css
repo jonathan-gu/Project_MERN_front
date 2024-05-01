@@ -7,11 +7,11 @@
     display: grid;
     grid-gap: 50px;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    margin: 0 50px;
+    margin: 50px;
 }
 
 .card {
-    margin: -40px auto;
+    margin: auto;
     width: 100%;
 }
 

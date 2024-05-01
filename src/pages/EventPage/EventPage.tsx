@@ -39,7 +39,7 @@ const EventPage = () => {
     };
     
     return (
-        <Card className="card">
+        <Card className="event">
             {/* <CardMedia component="img" alt="green iguana" height="140" /> */}
             <div className="backgroundEvent"></div>
             <CardContent>
