@@ -1,12 +1,43 @@
-import { Button, Card, CardActions, CardContent, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
+import { Box, Button, Card, CardActions, CardContent, FormControl, InputLabel, MenuItem, Modal, Select, SelectChangeEvent, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import Event from "../../models/event";
 import "./HomePage.css"
 import { Link } from "react-router-dom";
+import DeleteIcon from '@mui/icons-material/Delete';
+import CancelIcon from '@mui/icons-material/Cancel';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+
+const style = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    p: 4,
+  };
 
 const HomePage = () => {
     const [events, setEvents] = useState<Event[]>([])
+    const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
     const [sortBy, setSortBy] = useState<string>('');
+    const [open, setOpen] = useState(false);
+
+    const handleOpen = (eventToDelete: Event) => {
+        setSelectedEvent(eventToDelete);
+        setOpen(true);
+    };
+    const handleClose = () => setOpen(false);
+
+    const [openConfirmation, setOpenConfirmation] = useState(false);
+
+    const handleOpenConfirmation = () => {
+        handleClose()
+        setOpenConfirmation(true);
+    }
+
+    const handleCloseConfirmation = () => setOpenConfirmation(false);
 
     useEffect(() => {
         async function getEvents () {
@@ -55,6 +86,26 @@ const HomePage = () => {
         setEvents(sortedEvents);
     };
 
+    const handleOnDelete = async (eventToDelete: Event | null) => {
+        if (eventToDelete !== null) {
+            try {
+                const response = await fetch(`http://localhost:8080/event/${eventToDelete._id}`, {
+                    method: 'DELETE',
+                });
+                if (response.ok) {
+                    const updatedEvents = events.filter((evt) => evt._id !== eventToDelete._id);
+                    setEvents(updatedEvents);
+                    handleClose();
+                    handleOpenConfirmation();
+                } else {
+                    console.error('La suppression de l\'événement a échoué.');
+                }
+            } catch (error) {
+                console.error('Erreur lors de la suppression de l\'événement :', error);
+            }
+        }
+    } 
+
     return (
         <>
             <FormControl className="select">
@@ -84,12 +135,49 @@ const HomePage = () => {
                                 Date : {formatDate(event.date)}
                             </Typography>
                         </CardContent>
-                        <CardActions>
+                        <CardActions className="cardActions">
                             <Button component={Link} to={"/event/" + event._id} size="small">Plus d'informations</Button>
+                            <Button onClick={() => handleOpen(event)} size="small"><DeleteIcon className="trash" /></Button>
                         </CardActions>
                     </Card>
                 )}
             </div>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <Typography className="titleModal" id="modal-modal-title" variant="h5" component="h2">
+                        Suppression de l'événement
+                    </Typography>
+                    <CancelIcon className="cancel"/>
+                    <Typography className="message" id="modal-modal-description" sx={{ mt: 2 }}>
+                        Confirmez-vous la suppresion de l'événement ?
+                    </Typography>
+                    <CardActions className="buttonsModal">
+                        <Button className="buttonModal buttonTrue" onClick={() => handleOnDelete(selectedEvent)} size="medium">Oui</Button>
+                        <Button className="buttonModal buttonFalse" onClick={handleClose} size="medium">Non</Button>
+                    </CardActions>
+                </Box>
+            </Modal>
+            <Modal
+                open={openConfirmation}
+                onClose={handleCloseConfirmation}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <Typography className="titleModal" id="modal-modal-title" variant="h5" component="h2">
+                        Suppression de l'événement
+                    </Typography>
+                    <CheckCircleOutlineIcon className="check"/>
+                    <Typography className="message" id="modal-modal-description" sx={{ mt: 2 }}>
+                        Lévénement a bien été supprimé
+                    </Typography>
+                </Box>
+            </Modal>
         </>
     )
 }

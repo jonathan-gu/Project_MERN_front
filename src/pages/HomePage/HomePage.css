@@ -19,3 +19,55 @@
     background-color: #888888;
     height: 140px;
 }
+
+.trash {
+    color: black;
+}
+
+.cardActions {
+    justify-content: space-between;
+}
+
+.titleModal {
+    margin-top: 30px !important;
+    text-align: center;
+}
+
+.cancel {
+    color: #cc0000 !important;
+    font-size: 80px !important;
+    margin-top: 30px;
+    justify-content: center;
+    width: 100% !important;
+}
+
+.check {
+    color: #008800 !important;
+    font-size: 80px !important;
+    margin-top: 30px;
+    justify-content: center;
+    width: 100% !important;
+}
+
+.message {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.buttonsModal {
+    justify-content: center;
+}
+
+.buttonModal {
+    margin: 20px !important;
+}
+
+.buttonTrue {
+    background-color: #008800 !important;
+    color: #ffffff !important;
+}
+
+.buttonFalse {
+    background-color: #cc0000 !important;
+    color: #ffffff !important;
+}
