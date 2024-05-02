@@ -81,7 +81,6 @@ const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmat
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // setFormData({ ...formData, "date": new Date(formData.date).toString() });
         if (isNew) {
             try {
                 const response = await fetch("http://localhost:8080/event", {
