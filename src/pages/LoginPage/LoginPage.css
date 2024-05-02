@@ -1,0 +1,9 @@
+.event {
+    margin: 118.5px auto auto auto;
+    max-width: 80%;
+}
+
+.backgroundEvent {
+    background-color: #888888;
+    height: 300px;
+}

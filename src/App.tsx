@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage/HomePage"
 import AddEventPage from "./pages/AddEventPage/AddEventPage"
 import EventPage from "./pages/EventPage/EventPage"
 import UpdateEventPage from "./pages/UpdateEventPage/UpdateEventPage"
+import LoginPage from "./pages/LoginPage/LoginPage"
 
 function App() {
   return (
@@ -12,7 +13,8 @@ function App() {
       <NavBar />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<LoginPage />} />
+          <Route path="/home" element={<HomePage />} />
           <Route path="/addEvent" element={<AddEventPage />} />
           <Route path="/event/:id" element={<EventPage />} />
           <Route path="/updateEvent/:id" element={<UpdateEventPage />} />

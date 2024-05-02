@@ -21,6 +21,8 @@ const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmat
         city: "",
         date: "",
         type: "",
+        imageName: null,
+        link: null,
     });
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | { name?: string | undefined; value: unknown; }>) => {
@@ -40,6 +42,7 @@ const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmat
         try {
             const response = await fetch("http://localhost:8080/event", {
                 method: "POST",
+                credentials: 'include',
                 headers: {
                     "Content-Type": "application/json"
                 },
@@ -63,8 +66,8 @@ const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmat
             <h1>{title}</h1>
             
             <div className="fields">
-                <TextField className="field" required id="outlined-required" label="Titre (lettres et chiffres, 20 - 200 caractères)" name="title" placeholder="Ajouter un titre" onChange={handleChange} value={formData.title} />
-                <TextField className="field" required id="outlined-required" label="Description (lettres et chiffres, 200 - 2000 caractères)" name="description" placeholder="Ajouter une description" onChange={handleChange} value={formData.description} />
+                <TextField className="field" required id="outlined-required" label="Titre (lettres et chiffres, 5 - 200 caractères)" name="title" placeholder="Ajouter un titre" onChange={handleChange} value={formData.title} />
+                <TextField className="field" required id="outlined-required" label="Description (lettres et chiffres, 20 - 2000 caractères)" name="description" placeholder="Ajouter une description" onChange={handleChange} value={formData.description} />
                 <TextField className="field" required id="outlined-required" label="Ville (lettres et chiffres)" name="city" placeholder="Ajouter une ville" onChange={handleChange} value={formData.city} />
                 <TextField className="field" required id="outlined-required" type="date" name="date" onChange={handleChange} value={formData.date} />
                 <FormControl className="field">
