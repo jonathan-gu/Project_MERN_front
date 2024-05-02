@@ -15,6 +15,10 @@
     width: 100%;
 }
 
+.cardTitle {
+    min-height: 60px;
+}
+
 .background {
     background-color: #888888;
     height: 140px;

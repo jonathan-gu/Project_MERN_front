@@ -123,7 +123,7 @@ const HomePage = () => {
                         {/* <CardMedia component="img" alt="green iguana" height="140" /> */}
                         <div className="background"></div>
                         <CardContent>
-                            <Typography gutterBottom variant="h5" component="div">
+                            <Typography className="cardTitle" gutterBottom component="div">
                                 {event.title}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
@@ -178,7 +178,7 @@ const HomePage = () => {
                     </Typography>
                     <CheckCircleOutlineIcon className="check"/>
                     <Typography className="message" id="modal-modal-description" sx={{ mt: 2 }}>
-                        Lévénement a bien été supprimé
+                        L'événement a bien été supprimé
                     </Typography>
                 </Box>
             </Modal>
