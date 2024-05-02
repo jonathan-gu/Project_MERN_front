@@ -21,8 +21,7 @@ const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmat
         city: "",
         date: "",
         type: "",
-        imageName: null,
-        link: null,
+        link: [String] || null,
     });
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | { name?: string | undefined; value: unknown; }>) => {
@@ -78,6 +77,7 @@ const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmat
                         <MenuItem value="PRIVATE MEETING">Réunion privée</MenuItem>
                     </Select>
                 </FormControl>
+                <TextField className="field" required id="outlined-required" label="Lien (Optionnel)" name="link" placeholder="Ajouter des liens" onChange={handleChange} value={formData.link} />
             </div>
             <div className="button">
                 <Button variant="contained" type="submit">Ajouter</Button>
