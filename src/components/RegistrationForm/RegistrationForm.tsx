@@ -39,7 +39,6 @@ const RegistrationForm = () => {
     };
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        console.log(formData)
         e.preventDefault();
         try {
             const response = await fetch("http://localhost:8080/auth/register", {
@@ -51,7 +50,6 @@ const RegistrationForm = () => {
                 body: JSON.stringify(formData)
             });
             if (response.ok) {
-                console.log(response)
                 navigate("/login");
             } else {
                 handleOpenErrorForm()

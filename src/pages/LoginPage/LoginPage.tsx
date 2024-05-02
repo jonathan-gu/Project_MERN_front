@@ -1,10 +1,34 @@
+import { Box, Button, Modal, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react';
+import CancelIcon from '@mui/icons-material/Cancel';
+import { useNavigate } from 'react-router-dom';
 
+const style = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    p: 4,
+  };
 
+interface LoginPageProps {
+    setIsConnected: (value: boolean) => void;
+}
 
-const Login: React.FC = () => {
+const Login: React.FC<LoginPageProps> = ({ setIsConnected }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    const navigate = useNavigate();
+
+    const [openErrorForm, setOpenErrorForm] = useState(false);
+
+    const handleOpenErrorForm = () => setOpenErrorForm(true);
+
+    const handleCloseErrorForm = () => setOpenErrorForm(false);
 
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -17,8 +41,15 @@ const Login: React.FC = () => {
                 credentials: 'include'
             });
             const data = await response.json();
-            const payload = data.payload;
-            console.log(payload);
+            if (response.ok) {
+                const payload = data.payload;
+                localStorage.setItem("userId", payload.id)
+                setIsConnected(true)
+                navigate("/");
+            }
+            else {
+                handleOpenErrorForm()
+            }
             
         } catch (error) {
             console.error(error);
@@ -26,32 +57,34 @@ const Login: React.FC = () => {
     };
 
     return (
-        <div className="form-box">
-            <h2>Connexion</h2>
-            <div className="form">
-                <form onSubmit={handleSubmit}>
-                    <div>
-                        <input
-                            placeholder="Email"
-                            type="email"
-                            id="email"
-                            value={email}
-                            onChange={(event) => setEmail(event.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <input
-                            placeholder="Mot de passe"
-                            type="password"
-                            id="password"
-                            value={password}
-                            onChange={(event) => setPassword(event.target.value)}
-                        />
-                    </div>
-                    <button className="valid-button" type="submit">Connexion</button>
-                </form>
-            </div>
-        </div>
+        <>
+            <form onSubmit={handleSubmit}>
+                <h1>Connexion</h1>
+                <div className="fields">
+                    <TextField className="field" required id="outlined-required" label="Email" name="email" placeholder="Veuillez saisir votre email" onChange={(e) => setEmail(e.target.value)} value={email} type="email" />
+                    <TextField className="field" required id="outlined-required" label="Mot de passe" name="password" placeholder="Veuillez saisir votre mot de passe" type="password" onChange={(e) => setPassword(e.target.value)} value={password} />
+                </div>
+                <div className="button">
+                    <Button variant="contained" type="submit">Connexion</Button>
+                </div>
+            </form>
+            <Modal
+                open={openErrorForm}
+                onClose={handleCloseErrorForm}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <Typography className="titleModal" id="modal-modal-title" variant="h5" component="h2">
+                        Connexion
+                    </Typography>
+                    <CancelIcon className="cancel"/>
+                    <Typography className="message" id="modal-modal-description" sx={{ mt: 2 }}>
+                        Erreur dans le formulaire
+                    </Typography>
+                </Box>
+            </Modal>
+        </>
     );
 };
 
