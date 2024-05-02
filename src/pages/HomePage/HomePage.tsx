@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import DeleteIcon from '@mui/icons-material/Delete';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import EditIcon from '@mui/icons-material/Edit';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -137,7 +138,10 @@ const HomePage = () => {
                         </CardContent>
                         <CardActions className="cardActions">
                             <Button component={Link} to={"/event/" + event._id} size="small">Plus d'informations</Button>
-                            <Button onClick={() => handleOpen(event)} size="small"><DeleteIcon className="trash" /></Button>
+                            <div>
+                                <Button component="a" href={"/updateEvent/" + event._id} size="small"><EditIcon className="icon" /></Button>
+                                <Button onClick={() => handleOpen(event)} size="small"><DeleteIcon className="icon" /></Button>
+                            </div>
                         </CardActions>
                     </Card>
                 )}
