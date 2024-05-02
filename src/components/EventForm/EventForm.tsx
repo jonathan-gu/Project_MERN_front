@@ -27,8 +27,7 @@ const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmat
         city: "",
         date: "",
         type: "",
-        imageName: null,
-        link: null,
+        link: [String] || null,
     });
 
     useEffect(() => {
@@ -137,6 +136,7 @@ const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmat
                         <MenuItem value="PRIVATE MEETING">Réunion privée</MenuItem>
                     </Select>
                 </FormControl>
+                <TextField className="field" required id="outlined-required" label="Lien (Optionnel)" name="link" placeholder="Ajouter des liens" onChange={handleChange} value={formData.link} />
             </div>
             <div className="button">
                 <Button variant="contained" type="submit">{messageButton}</Button>
