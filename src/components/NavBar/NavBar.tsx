@@ -6,7 +6,7 @@ import React from "react";
 import "./NavBar.css"
 
 const pages = [{ label: 'Ajouter un événement', link: '/addEvent' }, { label: 'Liste des événement', link: '/' }];
-const settings = ['Déconnexion'];
+const settings = [{ label: 'Inscription', link: "/registration" }];
 
 function NavBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -139,8 +139,8 @@ function NavBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+                <MenuItem key={setting.label} onClick={handleCloseUserMenu}>
+                  <Typography component="a" href={setting.link} textAlign="center">{setting.label}</Typography>
                 </MenuItem>
               ))}
             </Menu>

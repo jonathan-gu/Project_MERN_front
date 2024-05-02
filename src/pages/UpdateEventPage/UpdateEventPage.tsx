@@ -1,8 +1,9 @@
 import { useState } from "react";
-import FormAddEvent from "../../components/EventForm/EventForm";
+import EventForm from "../../components/EventForm/EventForm";
 import { Box, Modal, Typography } from "@mui/material";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CancelIcon from '@mui/icons-material/Cancel';
+import { useParams } from "react-router-dom";
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -27,9 +28,11 @@ const UpdateEventPage = () => {
 
     const handleCloseErrorForm = () => setOpenErrorForm(false);
 
+    const eventId = useParams().id as string; 
+
     return (
         <>
-            <FormAddEvent isNew={false} handleOpenConfirmation={handleOpenConfirmation} handleOpenErrorForm={handleOpenErrorForm} />
+            <EventForm isNew={false} handleOpenConfirmation={handleOpenConfirmation} handleOpenErrorForm={handleOpenErrorForm} eventId={eventId}/>
             <Modal
                 open={openConfirmation}
                 onClose={handleCloseConfirmation}
@@ -38,11 +41,11 @@ const UpdateEventPage = () => {
             >
                 <Box sx={style}>
                     <Typography className="titleModal" id="modal-modal-title" variant="h5" component="h2">
-                    Modification de l'événement
+                        Modification de l'événement
                     </Typography>
                     <CheckCircleOutlineIcon className="check"/>
                     <Typography className="message" id="modal-modal-description" sx={{ mt: 2 }}>
-                        Lévénement a bien été supprimé
+                        L'événement a bien été modifié
                     </Typography>
                 </Box>
             </Modal>

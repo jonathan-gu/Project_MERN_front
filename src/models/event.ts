@@ -5,9 +5,9 @@ class Event {
     city: String;
     date: Date;
     type: String;
-    users: [];
+    users: [Number];
 
-    constructor (_id: String, title: String, description: String, city: String, date: Date, type: String, users: []) {
+    constructor (_id: String, title: String, description: String, city: String, date: Date, type: String, users: [Number]) {
         this._id = _id;
         this.title = title;
         this.description = description;
