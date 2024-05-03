@@ -21,7 +21,9 @@ const RegistrationForm = () => {
         lastName: "",
         email: "",
         password: "",
-        role: "USER"
+        role: "USER",
+        subscribedEvent: [],
+        eventHeld: []
     });
 
     const [openErrorForm, setOpenErrorForm] = useState(false);

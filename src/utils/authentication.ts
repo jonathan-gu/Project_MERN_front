@@ -3,7 +3,6 @@ class Authentication {
 
     isConnected (): Boolean {
         const userId = localStorage.getItem("userId");
-        console.log(userId)
         if (userId) {
             return true;
         }

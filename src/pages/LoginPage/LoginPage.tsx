@@ -1,7 +1,8 @@
 import { Box, Button, Modal, TextField, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useNavigate } from 'react-router-dom';
+import Authentication from '../../utils/authentication';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -16,20 +17,28 @@ const style = {
 
 interface LoginPageProps {
     setIsConnected: (value: boolean) => void;
+    authentication: Authentication;
 }
 
-const Login: React.FC<LoginPageProps> = ({ setIsConnected }) => {
+const Login: React.FC<LoginPageProps> = ({ setIsConnected, authentication }) => {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const isConnected = authentication.isConnected();
+
+        if (isConnected) {
+            navigate("/")   
+        }
+    }, [])
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
-    const navigate = useNavigate();
 
     const [openErrorForm, setOpenErrorForm] = useState(false);
 
     const handleOpenErrorForm = () => setOpenErrorForm(true);
 
     const handleCloseErrorForm = () => setOpenErrorForm(false);
-
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -42,6 +51,7 @@ const Login: React.FC<LoginPageProps> = ({ setIsConnected }) => {
             });
             const data = await response.json();
             if (response.ok) {
+                console.log(response)
                 const payload = data.payload;
                 localStorage.setItem("userId", payload.id)
                 setIsConnected(true)

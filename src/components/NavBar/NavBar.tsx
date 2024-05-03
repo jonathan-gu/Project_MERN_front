@@ -4,17 +4,21 @@ import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import React from "react";
 import "./NavBar.css"
+import { useNavigate } from "react-router-dom";
 
 const pages = [{ label: 'Ajouter un événement', link: '/addEvent' }, { label: 'Liste des événement', link: '/' }];
-const settings = [{ label: 'Inscription', link: "/registration" }];
+const settings = [{ label: 'Déconnexion' }];
 
 interface NavBarProps {
   isConnected: Boolean
+  setIsConnected: (value: boolean) => void;
 }
 
-const NavBar: React.FC<NavBarProps> = ({ isConnected = false }) => {
+const NavBar: React.FC<NavBarProps> = ({ isConnected = false, setIsConnected }) => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+
+  const navigate = useNavigate();
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -30,6 +34,25 @@ const NavBar: React.FC<NavBarProps> = ({ isConnected = false }) => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const handleLogout = async () => {
+    setIsConnected(false)
+    try {
+      const response = await fetch("http://localhost:8080/auth/logout", {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include'
+      });
+      console.log(response)
+      if (response.ok) {
+          localStorage.removeItem("userId")
+          setIsConnected(false)
+          navigate("/login");
+      }
+    } catch (error) {
+        console.error(error);
+    }
+  }
 
   return (
     <AppBar position="fixed">
@@ -75,7 +98,7 @@ const NavBar: React.FC<NavBarProps> = ({ isConnected = false }) => {
               <Menu sx={{ mt: '45px' }} id="menu-appbar" anchorEl={anchorElUser} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right' }} open={Boolean(anchorElUser)} onClose={handleCloseUserMenu}>
                 {settings.map((setting) => (
                   <MenuItem key={setting.label} onClick={handleCloseUserMenu}>
-                    <Typography component="a" href={setting.link} textAlign="center">{setting.label}</Typography>
+                    <Typography textAlign="center" onClick={handleLogout}>{setting.label}</Typography>
                   </MenuItem>
                 ))}
               </Menu>

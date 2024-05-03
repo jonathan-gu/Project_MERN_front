@@ -2,11 +2,12 @@ import { Box, Button, Card, CardActions, CardContent, FormControl, InputLabel, M
 import { useEffect, useState } from "react";
 import Event from "../../models/event";
 import "./HomePage.css"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DeleteIcon from '@mui/icons-material/Delete';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import EditIcon from '@mui/icons-material/Edit';
+import Authentication from "../../utils/authentication";
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -19,7 +20,13 @@ const style = {
     p: 4,
   };
 
-const HomePage = () => {
+interface HomePageProps {
+    authentication: Authentication;
+}
+
+const HomePage: React.FC<HomePageProps> = ({ authentication }) => {
+    const navigate = useNavigate();
+
     const [events, setEvents] = useState<Event[]>([])
     const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
     const [sortBy, setSortBy] = useState<string>('');
@@ -41,9 +48,15 @@ const HomePage = () => {
     const handleCloseConfirmation = () => setOpenConfirmation(false);
 
     useEffect(() => {
+        const isConnected = authentication.isConnected();
+
+        if (!isConnected) {
+            navigate("/login")   
+        }
+
         async function getEvents () {
             try {
-                const response = await fetch("http://localhost:8080/event");
+                const response = await fetch("http://localhost:8080/event", { credentials: 'include' });
                 const responseData = await response.json();
                 if (responseData.payload && Array.isArray(responseData.payload)) {
                     const eventsGet: Event[] = responseData.payload.map((event: any) => {

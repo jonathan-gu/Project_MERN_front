@@ -12,17 +12,17 @@ import Authentication from "./utils/authentication"
 
 function App() {
   const authentication = new Authentication()
-
+  
   const [isConnected, setIsConnected] = useState(authentication.isConnected())
   
   return (
     <>
-      <NavBar isConnected={isConnected} />
       <BrowserRouter>
+        <NavBar isConnected={isConnected} setIsConnected={setIsConnected} />
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/registration" element={<RegistrationPage />} />
-          <Route path="/login" element={<LoginPage setIsConnected={setIsConnected} />} />
+          <Route path="/" element={<HomePage authentication={authentication} />} />
+          <Route path="/registration" element={<RegistrationPage authentication={authentication} />} />
+          <Route path="/login" element={<LoginPage setIsConnected={setIsConnected} authentication={authentication} />} />
           <Route path="/addEvent" element={<AddEventPage />} />
           <Route path="/event/:id" element={<EventPage />} />
           <Route path="/updateEvent/:id" element={<UpdateEventPage />} />
