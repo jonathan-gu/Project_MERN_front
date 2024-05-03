@@ -105,6 +105,7 @@ const HomePage: React.FC<HomePageProps> = ({ authentication }) => {
             try {
                 const response = await fetch(`http://localhost:8080/event/${eventToDelete._id}`, {
                     method: 'DELETE',
+                    credentials: 'include'
                 });
                 if (response.ok) {
                     const updatedEvents = events.filter((evt) => evt._id !== eventToDelete._id);
