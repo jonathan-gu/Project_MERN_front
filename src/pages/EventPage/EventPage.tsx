@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Event from "../../models/event";
 import "./EventPage.css"
 import Authentication from "../../utils/authentication";
+import User from "../../models/user";
 
 interface EventPageProps {
     authentication: Authentication;
@@ -14,6 +15,7 @@ const EventPage: React.FC<EventPageProps> = ({ authentication }) => {
     const id = useParams().id;
 
     const [event, setEvent] = useState<Event | null>(null)
+    const [user, setUser] = useState<User | null>(null)
 
     useEffect(() => {
         const isConnected = authentication.isConnected();
@@ -28,8 +30,12 @@ const EventPage: React.FC<EventPageProps> = ({ authentication }) => {
                 const responseData = await response.json();
                 if (responseData.payload) {
                     const eventGet = new Event(responseData.payload._id, responseData.payload.title, responseData.payload.description, responseData.payload.city, responseData.payload.date, responseData.payload.type, responseData.payload.link, responseData.payload.owner, responseData.payload.subscriber);
-                    console.log(eventGet)
                     setEvent(eventGet);
+                    // console.log(responseData.payload)
+                    // const responseUser = await fetch(`http://localhost:8080/user/${responseData.payload.owner}`, { credentials: 'include' });
+                    // const responseUserData = await responseUser.json();
+                    // console.log(responseUserData)
+                    // const userGet = new User(responseUser.payload._id, responseUser.payload.firstName, responseUser.payload.lastName, responseUser.payload.email, responseUser.payload.role, responseUser.payload._id);
                 } else {
                     console.error("Payload is undefined or not an array");
                 }
@@ -70,15 +76,18 @@ const EventPage: React.FC<EventPageProps> = ({ authentication }) => {
                 <Typography variant="body2" color="text.secondary">
                     Date : {event !== null ? formatDate(event.date) : ""}
                 </Typography>
+                {/* <Typography variant="body2" color="text.secondary">
+                    Organisateur : {event !== null ? formatDate(event.date) : ""}
+                </Typography> */}
                 <Typography variant="body2" color="text.secondary">
                     Nombre de participants : {event !== null ? event.subscriber.length : ""}
                 </Typography>
-                {/* {event !== null ? event.link.forEach(aLink => (
-                        <Typography component="a" href={aLink} variant="body2" color="text.secondary">
-                            Nombre de participants : {event !== null ? event.subscriber.length : ""}
-                        </Typography>
-                    )) : ""
-                } */}
+                {event !== null ? event.link.map((aLink, index) => (
+                    <Typography className="link" key={index} component="a" href={aLink.toString()} variant="body2" color="text.secondary">
+                        {aLink}
+                    </Typography>
+                )) : ""}
+
             </CardContent>
         </Card>
     )

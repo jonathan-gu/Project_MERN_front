@@ -74,6 +74,9 @@ const RegistrationForm = () => {
                 <div className="button">
                     <Button variant="contained" type="submit">Inscription</Button>
                 </div>
+                <Typography className="linkAuth" variant="h6" component="a" href='/login'>
+                    Vous avez déjà un compte ? Connectez-vous
+                </Typography>
             </form>
             <Modal
                 open={openErrorForm}

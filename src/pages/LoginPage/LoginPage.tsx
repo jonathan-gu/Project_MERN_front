@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useNavigate } from 'react-router-dom';
 import Authentication from '../../utils/authentication';
+import "./LoginPage.css"
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -80,6 +81,9 @@ const Login: React.FC<LoginPageProps> = ({ setIsConnected, authentication }) => 
                 <div className="button">
                     <Button variant="contained" type="submit">Connexion</Button>
                 </div>
+                <Typography className="linkAuth" variant="h6" component="a" href='/registration'>
+                    Vous n'avez pas de compte ? Inscrivez-vous
+                </Typography>
             </form>
             <Modal
                 open={openErrorForm}

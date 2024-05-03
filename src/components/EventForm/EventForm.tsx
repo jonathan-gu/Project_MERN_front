@@ -39,7 +39,7 @@ const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmat
                         setCity(eventGet.city)
                         setDate(new Date(eventGet.date))
                         setType(eventGet.type)
-                        setLink(eventGet.link[0])
+                        setLink(eventGet.link[0].toString())
                     } else {
                         console.error("Payload is undefined or not an array");
                     }

@@ -7,6 +7,8 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import EditIcon from '@mui/icons-material/Edit';
 import { Link, useNavigate } from "react-router-dom";
 import Authentication from "../../utils/authentication";
+import React from "react";
+import "./MyEventsPage.css"
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -63,6 +65,24 @@ const MyEventsPage: React.FC<HomePageProps> = ({ authentication }) => {
         return `${day}/${month}/${year}`;
     };
 
+    useEffect(() => {
+        const getUser = async () => {
+            const response = await fetch(`http://localhost:8080/user/${authentication.getUserId()}`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+            const responseData = await response.json();
+            const eventsPromises = responseData.payload.eventHeld.map(async (evt: string) => {
+                const responseEvent = await fetch(`http://localhost:8080/event/${evt}`, { credentials: 'include' });
+                const responseEventData = await responseEvent.json();
+                return new Event(responseEventData.payload._id, responseEventData.payload.title, responseEventData.payload.description, responseEventData.payload.city, new Date(responseEventData.payload.date), responseEventData.payload.type, responseEventData.payload.link, responseEventData.payload.owner, responseEventData.payload.subscriber);
+            });
+            const eventsGet = await Promise.all(eventsPromises);
+            setEvents(eventsGet);
+        }
+        getUser();
+    }, []);
+
     const handleOnDelete = async (eventToDelete: Event | null) => {
         if (eventToDelete !== null) {
             try {
@@ -86,9 +106,9 @@ const MyEventsPage: React.FC<HomePageProps> = ({ authentication }) => {
 
     return (
         <>
-            <div className="events">
+            <div className="events myEvents">
                 {events.map((event, index) =>
-                    <>
+                    <React.Fragment key={index}>
                         <Card className="card" key={index} sx={{ maxWidth: 345 }}>
                             {/* <CardMedia component="img" alt="green iguana" height="140" /> */}
                             <div className="background"></div>
@@ -150,7 +170,7 @@ const MyEventsPage: React.FC<HomePageProps> = ({ authentication }) => {
                                 </Typography>
                             </Box>
                         </Modal>
-                    </>
+                    </React.Fragment>
                 )}
             </div>
         </>
