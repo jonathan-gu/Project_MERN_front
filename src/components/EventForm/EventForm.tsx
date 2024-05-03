@@ -27,7 +27,7 @@ const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmat
         city: "",
         date: "",
         type: "",
-        link: [String] || null,
+        link: "",
     });
 
     useEffect(() => {
@@ -37,7 +37,7 @@ const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmat
                     const response = await fetch(`http://localhost:8080/event/${eventId}`, { credentials: 'include' });
                     const responseData = await response.json();
                     if (responseData.payload) {
-                        const eventGet = new Event(responseData.payload._id, responseData.payload.title, responseData.payload.description, responseData.payload.city, responseData.payload.date, responseData.payload.type, responseData.payload.users);
+                        const eventGet = new Event(responseData.payload._id, responseData.payload.title, responseData.payload.description, responseData.payload.city, responseData.payload.date, responseData.payload.type, responseData.payload.link, responseData.payload.owner, responseData.payload.subscriber);
                         setDate(new Date(eventGet.date))
                         setFormData({
                             title: eventGet.title.toString(),
@@ -45,8 +45,7 @@ const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmat
                             city: eventGet.city.toString(),
                             date: eventGet.date.toString(),
                             type: eventGet.type.toString(),
-                            imageName: null,
-                            link: null,
+                            link: "",
                         })
                     } else {
                         console.error("Payload is undefined or not an array");
@@ -81,14 +80,50 @@ const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmat
         e.preventDefault();
         if (isNew) {
             try {
-                const response = await fetch("http://localhost:8080/event", {
-                    method: "POST",
-                    credentials: 'include',
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(formData)
-                });
+                let response: Response;
+                if (formData.link === "") {
+                    response = await fetch("http://localhost:8080/event", {
+                        method: "POST",
+                        credentials: 'include',
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            title: formData.title,
+                            description: formData.description,
+                            city: formData.city,
+                            date: formData.date,
+                            type: formData.type,
+                            subscriber: []
+                        })
+                    });
+                } else {
+                    console.log({
+                        title: formData.title,
+                        description: formData.description,
+                        city: formData.city,
+                        date: formData.date,
+                        type: formData.type,
+                        link: [formData.link],
+                        subscriber: []
+                    })
+                    response = await fetch("http://localhost:8080/event", {
+                        method: "POST",
+                        credentials: 'include',
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            title: formData.title,
+                            description: formData.description,
+                            city: formData.city,
+                            date: formData.date,
+                            type: formData.type,
+                            link: [formData.link],
+                            subscriber: []
+                        })
+                    });
+                }
                 if (response.ok) {
                     handleOpenConfirmation()
                 } else {
@@ -99,14 +134,42 @@ const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmat
             }
         } else {
             try {
-                const response = await fetch(`http://localhost:8080/event/${eventId}`, {
-                    method: "PATCH",
-                    credentials: 'include',
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(formData)
-                });
+                let response: Response;
+                if (formData.link === "") {
+                    response = await fetch("http://localhost:8080/event", {
+                        method: "POST",
+                        credentials: 'include',
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            title: formData.title,
+                            description: formData.description,
+                            city: formData.city,
+                            date: formData.date,
+                            type: formData.type,
+                            link: [],
+                            subscriber: []
+                        })
+                    });
+                } else {
+                    response = await fetch("http://localhost:8080/event", {
+                        method: "POST",
+                        credentials: 'include',
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            title: formData.title,
+                            description: formData.description,
+                            city: formData.city,
+                            date: formData.date,
+                            type: formData.type,
+                            link: [],
+                            subscriber: []
+                        })
+                    });
+                }
                 if (response.ok) {
                     handleOpenConfirmation()
                 } else {
@@ -136,7 +199,7 @@ const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmat
                         <MenuItem value="PRIVATE MEETING">Réunion privée</MenuItem>
                     </Select>
                 </FormControl>
-                <TextField className="field" required id="outlined-required" label="Lien (Optionnel)" name="link" placeholder="Ajouter des liens" onChange={handleChange} value={formData.link} />
+                <TextField className="field" id="outlined-required" label="Lien (Optionnel)" name="link" placeholder="Ajouter des liens" onChange={handleChange} value={formData.link} />
             </div>
             <div className="button">
                 <Button variant="contained" type="submit">{messageButton}</Button>

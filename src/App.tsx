@@ -23,8 +23,8 @@ function App() {
           <Route path="/" element={<HomePage authentication={authentication} />} />
           <Route path="/registration" element={<RegistrationPage authentication={authentication} />} />
           <Route path="/login" element={<LoginPage setIsConnected={setIsConnected} authentication={authentication} />} />
-          <Route path="/addEvent" element={<AddEventPage />} />
-          <Route path="/event/:id" element={<EventPage />} />
+          <Route path="/addEvent" element={<AddEventPage authentication={authentication} />} />
+          <Route path="/event/:id" element={<EventPage authentication={authentication} />} />
           <Route path="/updateEvent/:id" element={<UpdateEventPage />} />
         </Routes>
       </BrowserRouter>

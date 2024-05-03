@@ -60,7 +60,7 @@ const HomePage: React.FC<HomePageProps> = ({ authentication }) => {
                 const responseData = await response.json();
                 if (responseData.payload && Array.isArray(responseData.payload)) {
                     const eventsGet: Event[] = responseData.payload.map((event: any) => {
-                        return new Event(event._id, event.title, event.description, event.city, event.date, event.type, event.users);
+                        return new Event(event._id, event.title, event.description, event.city, event.date, event.type, event.link, event.owner, event.subscriber);
                     });
                     setEvents(eventsGet);
                 } else {
@@ -95,7 +95,7 @@ const HomePage: React.FC<HomePageProps> = ({ authentication }) => {
         } else if (sortBy === 'type') {
             sortedEvents.sort((a, b) => a.type.localeCompare(b.type.toString()));
         } else if (sortBy === 'popularity') {
-            sortedEvents.sort((a, b) => a.users.length - b.users.length);
+            sortedEvents.sort((a, b) => a.subscriber.length - b.subscriber.length);
         }
         setEvents(sortedEvents);
     };

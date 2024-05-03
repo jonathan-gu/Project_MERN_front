@@ -1,21 +1,34 @@
 import { Button, Card, CardActions, CardContent, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Event from "../../models/event";
 import "./EventPage.css"
+import Authentication from "../../utils/authentication";
 
-const EventPage = () => {
+interface EventPageProps {
+    authentication: Authentication;
+}
+
+const EventPage: React.FC<EventPageProps> = ({ authentication }) => {
+    const navigate = useNavigate();
     const id = useParams().id;
 
     const [event, setEvent] = useState<Event | null>(null)
 
     useEffect(() => {
+        const isConnected = authentication.isConnected();
+
+        if (!isConnected) {
+            navigate("/login")   
+        }
+
         async function getEvent () {
             try {
                 const response = await fetch(`http://localhost:8080/event/${id}`, { credentials: 'include' });
                 const responseData = await response.json();
                 if (responseData.payload) {
-                    const eventGet = new Event(responseData.payload._id, responseData.payload.title, responseData.payload.description, responseData.payload.city, responseData.payload.date, responseData.payload.type, responseData.payload.users);
+                    const eventGet = new Event(responseData.payload._id, responseData.payload.title, responseData.payload.description, responseData.payload.city, responseData.payload.date, responseData.payload.type, responseData.payload.link, responseData.payload.owner, responseData.payload.subscriber);
+                    console.log(eventGet)
                     setEvent(eventGet);
                 } else {
                     console.error("Payload is undefined or not an array");
@@ -57,6 +70,15 @@ const EventPage = () => {
                 <Typography variant="body2" color="text.secondary">
                     Date : {event !== null ? formatDate(event.date) : ""}
                 </Typography>
+                <Typography variant="body2" color="text.secondary">
+                    Nombre de participants : {event !== null ? event.subscriber.length : ""}
+                </Typography>
+                {/* {event !== null ? event.link.forEach(aLink => (
+                        <Typography component="a" href={aLink} variant="body2" color="text.secondary">
+                            Nombre de participants : {event !== null ? event.subscriber.length : ""}
+                        </Typography>
+                    )) : ""
+                } */}
             </CardContent>
         </Card>
     )
