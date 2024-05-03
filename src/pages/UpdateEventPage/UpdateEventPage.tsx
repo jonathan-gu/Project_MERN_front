@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EventForm from "../../components/EventForm/EventForm";
 import { Box, Modal, Typography } from "@mui/material";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import Authentication from "../../utils/authentication";
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -16,7 +17,11 @@ const style = {
     p: 4,
   };
 
-const UpdateEventPage = () => {
+  interface UpdateEventPageProps {
+    authentication: Authentication;
+}
+
+const UpdateEventPage: React.FC<UpdateEventPageProps> = ({ authentication }) => {
     const [openConfirmation, setOpenConfirmation] = useState(false);
     const [openErrorForm, setOpenErrorForm] = useState(false);
 
@@ -28,7 +33,17 @@ const UpdateEventPage = () => {
 
     const handleCloseErrorForm = () => setOpenErrorForm(false);
 
-    const eventId = useParams().id as string; 
+    const eventId = useParams().id as string;
+
+    const navigate = useNavigate();
+    
+    useEffect(() => {
+        const isConnected = authentication.isConnected();
+
+        if (!isConnected) {
+            navigate("/login")   
+        }
+    }, [])
 
     return (
         <>

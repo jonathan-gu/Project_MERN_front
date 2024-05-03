@@ -6,7 +6,7 @@ import React from "react";
 import "./NavBar.css"
 import { useNavigate } from "react-router-dom";
 
-const pages = [{ label: 'Ajouter un événement', link: '/addEvent' }, { label: 'Liste des événement', link: '/' }];
+const pages = [{ label: 'Ajouter un événement', link: '/addEvent' }, { label: 'Liste des événement', link: '/' }, { label: 'Mes événements', link: '/myEvents '}];
 const settings = [{ label: 'Déconnexion' }];
 
 interface NavBarProps {
@@ -46,6 +46,7 @@ const NavBar: React.FC<NavBarProps> = ({ isConnected = false, setIsConnected }) 
       console.log(response)
       if (response.ok) {
           localStorage.removeItem("userId")
+          localStorage.removeItem("expirationDate")
           setIsConnected(false)
           navigate("/login");
       }

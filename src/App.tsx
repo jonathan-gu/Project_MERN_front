@@ -9,6 +9,7 @@ import LoginPage from "./pages/LoginPage/LoginPage"
 import RegistrationPage from "./pages/RegistrationPage/RegistrationPage"
 import { useState } from "react"
 import Authentication from "./utils/authentication"
+import MyEventsPage from "./pages/MyEventsPage/MyEventsPage"
 
 function App() {
   const authentication = new Authentication()
@@ -24,8 +25,9 @@ function App() {
           <Route path="/registration" element={<RegistrationPage authentication={authentication} />} />
           <Route path="/login" element={<LoginPage setIsConnected={setIsConnected} authentication={authentication} />} />
           <Route path="/addEvent" element={<AddEventPage authentication={authentication} />} />
+          <Route path="/myEvents" element={<MyEventsPage authentication={authentication} />} />
           <Route path="/event/:id" element={<EventPage authentication={authentication} />} />
-          <Route path="/updateEvent/:id" element={<UpdateEventPage />} />
+          <Route path="/updateEvent/:id" element={<UpdateEventPage authentication={authentication} />} />
         </Routes>
       </BrowserRouter>
     </>

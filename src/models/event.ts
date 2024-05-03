@@ -5,11 +5,11 @@ class Event {
     city: String;
     date: Date;
     type: String;
-    link: [String];
+    link: String[];
     owner: String;
-    subscriber: [String];
+    subscriber: String[];
 
-    constructor (_id: String, title: String, description: String, city: String, date: Date, type: String, link: [String], owner: String, subscriber: [String]) {
+    constructor (_id: String, title: String, description: String, city: String, date: Date, type: String, link: String[], owner: String, subscriber: String[]) {
         this._id = _id;
         this.title = title;
         this.description = description;

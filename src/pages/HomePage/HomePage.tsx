@@ -3,11 +3,8 @@ import { useEffect, useState } from "react";
 import Event from "../../models/event";
 import "./HomePage.css"
 import { Link, useNavigate } from "react-router-dom";
-import DeleteIcon from '@mui/icons-material/Delete';
-import CancelIcon from '@mui/icons-material/Cancel';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import EditIcon from '@mui/icons-material/Edit';
 import Authentication from "../../utils/authentication";
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -18,7 +15,7 @@ const style = {
     bgcolor: 'background.paper',
     border: '2px solid #000',
     p: 4,
-  };
+};
 
 interface HomePageProps {
     authentication: Authentication;
@@ -31,14 +28,20 @@ const HomePage: React.FC<HomePageProps> = ({ authentication }) => {
     const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
     const [sortBy, setSortBy] = useState<string>('');
     const [open, setOpen] = useState(false);
+    const [openRemove, setOpenRemove] = useState(false);
+    const handleClose = () => setOpen(false);
+    const handleCloseRemove = () => setOpenRemove(false);
+    const [openConfirmation, setOpenConfirmation] = useState(false);
 
-    const handleOpen = (eventToDelete: Event) => {
-        setSelectedEvent(eventToDelete);
+    const handleOpen = (eventToPartipate: Event) => {
+        setSelectedEvent(eventToPartipate);
         setOpen(true);
     };
-    const handleClose = () => setOpen(false);
 
-    const [openConfirmation, setOpenConfirmation] = useState(false);
+    const handleOpenRemove = (eventToPartipate: Event) => {
+        setSelectedEvent(eventToPartipate);
+        setOpenRemove(true);
+    };
 
     const handleOpenConfirmation = () => {
         handleClose()
@@ -100,23 +103,98 @@ const HomePage: React.FC<HomePageProps> = ({ authentication }) => {
         setEvents(sortedEvents);
     };
 
-    const handleOnDelete = async (eventToDelete: Event | null) => {
-        if (eventToDelete !== null) {
+    const handleOnParticipate = async (eventToParticipate: Event | null) => {
+        console.log(eventToParticipate)
+        if (eventToParticipate !== null) {
             try {
-                const response = await fetch(`http://localhost:8080/event/${eventToDelete._id}`, {
-                    method: 'DELETE',
-                    credentials: 'include'
-                });
-                if (response.ok) {
-                    const updatedEvents = events.filter((evt) => evt._id !== eventToDelete._id);
-                    setEvents(updatedEvents);
-                    handleClose();
-                    handleOpenConfirmation();
-                } else {
-                    console.error('La suppression de l\'événement a échoué.');
+                const userId = authentication.getUserId();
+                if (userId) {
+                    const response = await fetch(`http://localhost:8080/event/${eventToParticipate._id}`, {
+                        method: 'PATCH',
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            title: eventToParticipate.title,
+                            description: eventToParticipate.description,
+                            city: eventToParticipate.city,
+                            date: eventToParticipate.date,
+                            type: eventToParticipate.type,
+                            subscriber: [...eventToParticipate.subscriber, userId]
+                        }),
+                        credentials: 'include'
+                    });
+                    if (response.ok) {
+                        const participateEvents = events.filter((evt) => evt._id !== eventToParticipate._id);
+                        const subscriber = [...eventToParticipate.subscriber, userId] as String[]
+                        participateEvents.push({
+                            _id: eventToParticipate._id,
+                            title: eventToParticipate.title,
+                            description: eventToParticipate.description,
+                            city: eventToParticipate.city,
+                            date: eventToParticipate.date,
+                            type: eventToParticipate.type,
+                            link: eventToParticipate.link,
+                            owner: eventToParticipate.owner,
+                            subscriber: subscriber
+                        })
+                        console.log(participateEvents)
+                        setEvents(participateEvents);
+                        handleClose();
+                        handleOpenConfirmation();
+                    } else {
+                        console.error('La récupération de l\'événement a échoué.');
+                    }
                 }
             } catch (error) {
-                console.error('Erreur lors de la suppression de l\'événement :', error);
+                console.error('Erreur lors de la récupération de l\'événement :', error);
+            }
+        }
+    } 
+
+    const handleOnNotParticipate = async (eventToRemove: Event | null) => {
+        if (eventToRemove !== null) {
+            try {
+                const userId = authentication.getUserId();
+                if (userId) {
+                    const response = await fetch(`http://localhost:8080/event/${eventToRemove._id}`, {
+                        method: 'PATCH',
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            title: eventToRemove.title,
+                            description: eventToRemove.description,
+                            city: eventToRemove.city,
+                            date: eventToRemove.date,
+                            type: eventToRemove.type,
+                            subscriber: eventToRemove.subscriber.filter((sub) => sub !== userId)
+                        }),
+                        credentials: 'include'
+                    });
+                    if (response.ok) {
+                        const participateEvents = events.filter((evt) => evt._id !== eventToRemove._id);
+                        const subscriber = eventToRemove.subscriber.filter((sub) => sub !== userId) as String[]
+                        participateEvents.push({
+                            _id: eventToRemove._id,
+                            title: eventToRemove.title,
+                            description: eventToRemove.description,
+                            city: eventToRemove.city,
+                            date: eventToRemove.date,
+                            type: eventToRemove.type,
+                            link: eventToRemove.link,
+                            owner: eventToRemove.owner,
+                            subscriber: subscriber
+                        })
+                        setEvents(participateEvents);
+                        handleCloseRemove();
+                        handleOpenConfirmation();
+                    } else {
+                        console.error('La récupération de l\'événement a échoué.');
+                    }
+                }
+            } catch (error) {
+                console.error('Erreur lors de la récupération de l\'événement :', error);
             }
         }
     } 
@@ -152,34 +230,54 @@ const HomePage: React.FC<HomePageProps> = ({ authentication }) => {
                         </CardContent>
                         <CardActions className="cardActions">
                             <Button component={Link} to={"/event/" + event._id} size="small">Plus d'informations</Button>
-                            <div>
-                                <Button component="a" href={"/updateEvent/" + event._id} size="small"><EditIcon className="icon" /></Button>
-                                <Button onClick={() => handleOpen(event)} size="small"><DeleteIcon className="icon" /></Button>
-                            </div>
+                            {event.subscriber.filter((sub) => sub === authentication.getUserId()).length === 0
+                                ? 
+                                <Button onClick={() => handleOpen(event)} size="small">Partiper</Button>
+                                :
+                                <Button onClick={() => handleOpenRemove(event)} size="small">Ne pas partiper</Button>
+                            }
                         </CardActions>
                     </Card>
                 )}
+                <Modal
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    <Box sx={style}>
+                        <Typography className="titleModal" id="modal-modal-title" variant="h5" component="h2">
+                            Participation à l'événement
+                        </Typography>
+                        <Typography className="message" id="modal-modal-description" sx={{ mt: 2 }}>
+                            Confirmez-vous votre participation à l'événement ?
+                        </Typography>
+                        <CardActions className="buttonsModal">
+                            <Button className="buttonModal buttonTrue" onClick={() => handleOnParticipate(selectedEvent)} size="medium">Oui</Button>
+                            <Button className="buttonModal buttonFalse" onClick={handleClose} size="medium">Non</Button>
+                        </CardActions>
+                    </Box>
+                </Modal>
+                <Modal
+                    open={openRemove}
+                    onClose={handleCloseRemove}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    <Box sx={style}>
+                        <Typography className="titleModal" id="modal-modal-title" variant="h5" component="h2">
+                            Participation à l'événement
+                        </Typography>
+                        <Typography className="message" id="modal-modal-description" sx={{ mt: 2 }}>
+                            Confirmez-vous ne plus vouloir participer à l'événement ?
+                        </Typography>
+                        <CardActions className="buttonsModal">
+                            <Button className="buttonModal buttonTrue" onClick={() => handleOnNotParticipate(selectedEvent)} size="medium">Oui</Button>
+                            <Button className="buttonModal buttonFalse" onClick={handleClose} size="medium">Non</Button>
+                        </CardActions>
+                    </Box>
+                </Modal>
             </div>
-            <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={style}>
-                    <Typography className="titleModal" id="modal-modal-title" variant="h5" component="h2">
-                        Suppression de l'événement
-                    </Typography>
-                    <CancelIcon className="cancel"/>
-                    <Typography className="message" id="modal-modal-description" sx={{ mt: 2 }}>
-                        Confirmez-vous la suppresion de l'événement ?
-                    </Typography>
-                    <CardActions className="buttonsModal">
-                        <Button className="buttonModal buttonTrue" onClick={() => handleOnDelete(selectedEvent)} size="medium">Oui</Button>
-                        <Button className="buttonModal buttonFalse" onClick={handleClose} size="medium">Non</Button>
-                    </CardActions>
-                </Box>
-            </Modal>
             <Modal
                 open={openConfirmation}
                 onClose={handleCloseConfirmation}
@@ -188,11 +286,11 @@ const HomePage: React.FC<HomePageProps> = ({ authentication }) => {
             >
                 <Box sx={style}>
                     <Typography className="titleModal" id="modal-modal-title" variant="h5" component="h2">
-                        Suppression de l'événement
+                        Participation à l'événement
                     </Typography>
                     <CheckCircleOutlineIcon className="check"/>
                     <Typography className="message" id="modal-modal-description" sx={{ mt: 2 }}>
-                        L'événement a bien été supprimé
+                        Vous être inscrit à l'événement
                     </Typography>
                 </Box>
             </Modal>

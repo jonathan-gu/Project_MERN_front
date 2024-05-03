@@ -54,6 +54,9 @@ const Login: React.FC<LoginPageProps> = ({ setIsConnected, authentication }) => 
                 console.log(response)
                 const payload = data.payload;
                 localStorage.setItem("userId", payload.id)
+                const expirationDate = new Date();
+                expirationDate.setHours(expirationDate.getHours() + 4)
+                localStorage.setItem("expirationDate", expirationDate.toString())
                 setIsConnected(true)
                 navigate("/");
             }

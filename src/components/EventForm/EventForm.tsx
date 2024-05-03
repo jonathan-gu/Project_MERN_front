@@ -11,24 +11,20 @@ interface EventFormProps {
 }
 
 const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmation, handleOpenErrorForm, eventId = null }) => {
-    let title = "Ajouter une événment";
+    let titleForm = "Ajouter une événment";
     let messageButton = "Ajouter";
 
     if (!isNew) {
-        title = "Modifier un événement";
+        titleForm = "Modifier un événement";
         messageButton = "Modifier";
     }
 
+    const [title, setTitle] = useState<String | null>(null)
+    const [description, setDescription] = useState<String | null>(null)
+    const [city, setCity] = useState<String | null>(null)
+    const [type, setType] = useState<String | null>(null)
+    const [link, setLink] = useState<string>("");
     const [date, setDate] = useState<Date | null>(null)
-
-    const [formData, setFormData] = useState({
-        title: "",
-        description: "",
-        city: "",
-        date: "",
-        type: "",
-        link: "",
-    });
 
     useEffect(() => {
         if (!isNew && eventId !== null) {
@@ -38,15 +34,12 @@ const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmat
                     const responseData = await response.json();
                     if (responseData.payload) {
                         const eventGet = new Event(responseData.payload._id, responseData.payload.title, responseData.payload.description, responseData.payload.city, responseData.payload.date, responseData.payload.type, responseData.payload.link, responseData.payload.owner, responseData.payload.subscriber);
+                        setTitle(eventGet.title)
+                        setDescription(eventGet.description)
+                        setCity(eventGet.city)
                         setDate(new Date(eventGet.date))
-                        setFormData({
-                            title: eventGet.title.toString(),
-                            description: eventGet.description.toString(),
-                            city: eventGet.city.toString(),
-                            date: eventGet.date.toString(),
-                            type: eventGet.type.toString(),
-                            link: "",
-                        })
+                        setType(eventGet.type)
+                        setLink(eventGet.link[0])
                     } else {
                         console.error("Payload is undefined or not an array");
                     }
@@ -66,14 +59,13 @@ const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmat
             return;
         }
     
-        setFormData({ ...formData, [name!]: value as string });
         if (name === "date") {
             setDate(new Date(value));
         }
     };
 
     const handleSelectChange = (e: SelectChangeEvent<string>) => {
-        setFormData({ ...formData, type: e.target.value });
+        setType(e.target.value);
     };
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -81,7 +73,7 @@ const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmat
         if (isNew) {
             try {
                 let response: Response;
-                if (formData.link === "") {
+                if (link === "") {
                     response = await fetch("http://localhost:8080/event", {
                         method: "POST",
                         credentials: 'include',
@@ -89,37 +81,28 @@ const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmat
                             "Content-Type": "application/json"
                         },
                         body: JSON.stringify({
-                            title: formData.title,
-                            description: formData.description,
-                            city: formData.city,
-                            date: formData.date,
-                            type: formData.type,
+                            title: title,
+                            description: description,
+                            city: city,
+                            date: date,
+                            type: type,
                             subscriber: []
                         })
                     });
                 } else {
-                    console.log({
-                        title: formData.title,
-                        description: formData.description,
-                        city: formData.city,
-                        date: formData.date,
-                        type: formData.type,
-                        link: [formData.link],
-                        subscriber: []
-                    })
                     response = await fetch("http://localhost:8080/event", {
-                        method: "POST",
+                        method: "PATCH",
                         credentials: 'include',
                         headers: {
                             "Content-Type": "application/json"
                         },
                         body: JSON.stringify({
-                            title: formData.title,
-                            description: formData.description,
-                            city: formData.city,
-                            date: formData.date,
-                            type: formData.type,
-                            link: [formData.link],
+                            title: title,
+                            description: description,
+                            city: city,
+                            date: date,
+                            type: type,
+                            link: [link],
                             subscriber: []
                         })
                     });
@@ -133,39 +116,40 @@ const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmat
                 console.error("Erreur lors de la requête :", error);
             }
         } else {
+            console.log(link)
             try {
                 let response: Response;
-                if (formData.link === "") {
-                    response = await fetch("http://localhost:8080/event", {
-                        method: "POST",
+                if (!link) {
+                    console.log(1)
+                    response = await fetch(`http://localhost:8080/event/${eventId}`, {
+                        method: "PATCH",
                         credentials: 'include',
                         headers: {
                             "Content-Type": "application/json"
                         },
                         body: JSON.stringify({
-                            title: formData.title,
-                            description: formData.description,
-                            city: formData.city,
-                            date: formData.date,
-                            type: formData.type,
-                            link: [],
+                            title: title,
+                            description: description,
+                            city: city,
+                            date: date,
+                            type: type,
                             subscriber: []
                         })
                     });
                 } else {
-                    response = await fetch("http://localhost:8080/event", {
-                        method: "POST",
+                    response = await fetch(`http://localhost:8080/event/${eventId}`, {
+                        method: "PATCH",
                         credentials: 'include',
                         headers: {
                             "Content-Type": "application/json"
                         },
                         body: JSON.stringify({
-                            title: formData.title,
-                            description: formData.description,
-                            city: formData.city,
-                            date: formData.date,
-                            type: formData.type,
-                            link: [],
+                            title: title,
+                            description: description,
+                            city: city,
+                            date: date,
+                            type: type,
+                            link: [link],
                             subscriber: []
                         })
                     });
@@ -184,22 +168,22 @@ const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmat
 
     return (
         <form onSubmit={handleSubmit}>
-            <h1>{title}</h1>
+            <h1>{titleForm}</h1>
             
             <div className="fields">
-                <TextField className="field" required id="outlined-required" label="Titre (lettres et chiffres, 5 - 200 caractères)" name="title" placeholder="Ajouter un titre" onChange={handleChange} value={formData.title} />
-                <TextField className="field" required id="outlined-required" label="Description (lettres et chiffres, 20 - 2000 caractères)" name="description" placeholder="Ajouter une description" onChange={handleChange} value={formData.description} />
-                <TextField className="field" required id="outlined-required" label="Ville (lettres et chiffres)" name="city" placeholder="Ajouter une ville" onChange={handleChange} value={formData.city} />
+                <TextField className="field" required id="outlined-required" label="Titre (lettres et chiffres, 5 - 200 caractères)" name="title" placeholder="Ajouter un titre" onChange={(e) => setTitle(e.target.value)} value={title ? title : ""} />
+                <TextField className="field" required id="outlined-required" label="Description (lettres et chiffres, 20 - 2000 caractères)" name="description" placeholder="Ajouter une description" onChange={(e) => setDescription(e.target.value)} value={description ? description : ""} />
+                <TextField className="field" required id="outlined-required" label="Ville (lettres et chiffres)" name="city" placeholder="Ajouter une ville" onChange={(e) => setCity(e.target.value)} value={city ? city : ""} />
                 <TextField className="field" required id="outlined-required" type="date" name="date" onChange={handleChange} value={date ? date.toISOString().substr(0, 10) : ""} />
                 <FormControl className="field">
                     <InputLabel id="demo-simple-select-label">Type</InputLabel>
-                    <Select labelId="demo-simple-select-label" id="demo-simple-select" label="Age" onChange={handleSelectChange} value={formData.type} >
+                    <Select labelId="demo-smoimple-select-label" id="de-simple-select" label="Age" onChange={(e) => setType(e.target.value)} value={type ? type : "CONFERENCE"} >
                         <MenuItem value="CONFERENCE">Conférence</MenuItem>
                         <MenuItem value="CONCERT">Concert</MenuItem>
                         <MenuItem value="PRIVATE MEETING">Réunion privée</MenuItem>
                     </Select>
                 </FormControl>
-                <TextField className="field" id="outlined-required" label="Lien (Optionnel)" name="link" placeholder="Ajouter des liens" onChange={handleChange} value={formData.link} />
+                <TextField className="field" id="outlined-required" label="Lien (Optionnel)" name="link" placeholder={link ? "" : "Ajouter des liens"} onChange={(e) => setLink(e.target.value)} value={link} />
             </div>
             <div className="button">
                 <Button variant="contained" type="submit">{messageButton}</Button>
