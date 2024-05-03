@@ -34,7 +34,7 @@ const EventForm: React.FC<EventFormProps> = ({ isNew = true, handleOpenConfirmat
         if (!isNew && eventId !== null) {
             async function getEvent () {
                 try {
-                    const response = await fetch(`http://localhost:8080/event/${eventId}`);
+                    const response = await fetch(`http://localhost:8080/event/${eventId}`, { credentials: 'include' });
                     const responseData = await response.json();
                     if (responseData.payload) {
                         const eventGet = new Event(responseData.payload._id, responseData.payload.title, responseData.payload.description, responseData.payload.city, responseData.payload.date, responseData.payload.type, responseData.payload.users);
