@@ -67,13 +67,13 @@ const MyEventsPage: React.FC<HomePageProps> = ({ authentication }) => {
 
     useEffect(() => {
         const getUser = async () => {
-            const response = await fetch(`http://localhost:8080/user/${authentication.getUserId()}`, {
+            const response = await fetch(`http://localhost:8080/api/user/${authentication.getUserId()}`, {
                 method: 'GET',
                 credentials: 'include'
             });
             const responseData = await response.json();
             const eventsPromises = responseData.payload.eventHeld.map(async (evt: string) => {
-                const responseEvent = await fetch(`http://localhost:8080/event/${evt}`, { credentials: 'include' });
+                const responseEvent = await fetch(`http://localhost:8080/api/event/${evt}`, { credentials: 'include' });
                 const responseEventData = await responseEvent.json();
                 return new Event(responseEventData.payload._id, responseEventData.payload.title, responseEventData.payload.description, responseEventData.payload.city, new Date(responseEventData.payload.date), responseEventData.payload.type, responseEventData.payload.link, responseEventData.payload.owner, responseEventData.payload.subscriber);
             });
@@ -86,7 +86,7 @@ const MyEventsPage: React.FC<HomePageProps> = ({ authentication }) => {
     const handleOnDelete = async (eventToDelete: Event | null) => {
         if (eventToDelete !== null) {
             try {
-                const response = await fetch(`http://localhost:8080/event/${eventToDelete._id}`, {
+                const response = await fetch(`http://localhost:8080/api/event/${eventToDelete._id}`, {
                     method: 'DELETE',
                     credentials: 'include'
                 });

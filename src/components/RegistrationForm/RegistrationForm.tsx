@@ -43,7 +43,7 @@ const RegistrationForm = () => {
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await fetch("http://localhost:8080/auth/register", {
+            const response = await fetch("http://localhost:8080/api/auth/register", {
                 method: "POST",
                 credentials: 'include',
                 headers: {

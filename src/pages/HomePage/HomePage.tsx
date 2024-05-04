@@ -59,7 +59,7 @@ const HomePage: React.FC<HomePageProps> = ({ authentication }) => {
 
         async function getEvents () {
             try {
-                const response = await fetch("http://localhost:8080/event", { credentials: 'include' });
+                const response = await fetch("http://localhost:8080/api/event", { credentials: 'include' });
                 const responseData = await response.json();
                 if (responseData.payload && Array.isArray(responseData.payload)) {
                     const eventsGet: Event[] = responseData.payload.map((event: any) => {
@@ -109,7 +109,7 @@ const HomePage: React.FC<HomePageProps> = ({ authentication }) => {
             try {
                 const userId = authentication.getUserId();
                 if (userId) {
-                    const response = await fetch(`http://localhost:8080/event/${eventToParticipate._id}`, {
+                    const response = await fetch(`http://localhost:8080/api/event/${eventToParticipate._id}`, {
                         method: 'PATCH',
                         headers: {
                             "Content-Type": "application/json"
@@ -157,7 +157,7 @@ const HomePage: React.FC<HomePageProps> = ({ authentication }) => {
             try {
                 const userId = authentication.getUserId();
                 if (userId) {
-                    const response = await fetch(`http://localhost:8080/event/${eventToRemove._id}`, {
+                    const response = await fetch(`http://localhost:8080/api/event/${eventToRemove._id}`, {
                         method: 'PATCH',
                         headers: {
                             "Content-Type": "application/json"

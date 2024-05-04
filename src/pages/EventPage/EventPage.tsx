@@ -26,13 +26,13 @@ const EventPage: React.FC<EventPageProps> = ({ authentication }) => {
 
         async function getEvent () {
             try {
-                const response = await fetch(`http://localhost:8080/event/${id}`, { credentials: 'include' });
+                const response = await fetch(`http://localhost:8080/api/event/${id}`, { credentials: 'include' });
                 const responseData = await response.json();
                 if (responseData.payload) {
                     const eventGet = new Event(responseData.payload._id, responseData.payload.title, responseData.payload.description, responseData.payload.city, responseData.payload.date, responseData.payload.type, responseData.payload.link, responseData.payload.owner, responseData.payload.subscriber);
                     setEvent(eventGet);
                     // console.log(responseData.payload)
-                    // const responseUser = await fetch(`http://localhost:8080/user/${responseData.payload.owner}`, { credentials: 'include' });
+                    // const responseUser = await fetch(`http://localhost:8080/api/user/${responseData.payload.owner}`, { credentials: 'include' });
                     // const responseUserData = await responseUser.json();
                     // console.log(responseUserData)
                     // const userGet = new User(responseUser.payload._id, responseUser.payload.firstName, responseUser.payload.lastName, responseUser.payload.email, responseUser.payload.role, responseUser.payload._id);
