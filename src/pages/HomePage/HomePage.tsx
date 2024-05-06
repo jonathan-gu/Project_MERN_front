@@ -32,14 +32,18 @@ const HomePage: React.FC<HomePageProps> = ({ authentication }) => {
     const handleClose = () => setOpen(false);
     const handleCloseRemove = () => setOpenRemove(false);
     const [openConfirmation, setOpenConfirmation] = useState(false);
+    const [selectedEventIndex, setSelectedEventIndex] = useState<number | null>(null);
 
-    const handleOpen = (eventToPartipate: Event) => {
+
+    const handleOpen = (eventToPartipate: Event, index: number) => {
         setSelectedEvent(eventToPartipate);
+        setSelectedEventIndex(index);
         setOpen(true);
     };
 
-    const handleOpenRemove = (eventToPartipate: Event) => {
+    const handleOpenRemove = (eventToPartipate: Event, index: number) => {
         setSelectedEvent(eventToPartipate);
+        setSelectedEventIndex(index);
         setOpenRemove(true);
     };
 
@@ -125,21 +129,12 @@ const HomePage: React.FC<HomePageProps> = ({ authentication }) => {
                         credentials: 'include'
                     });
                     if (response.ok) {
-                        const participateEvents = events.filter((evt) => evt._id !== eventToParticipate._id);
-                        const subscriber = [...eventToParticipate.subscriber, userId] as String[]
-                        participateEvents.push({
-                            _id: eventToParticipate._id,
-                            title: eventToParticipate.title,
-                            description: eventToParticipate.description,
-                            city: eventToParticipate.city,
-                            date: eventToParticipate.date,
-                            type: eventToParticipate.type,
-                            link: eventToParticipate.link,
-                            owner: eventToParticipate.owner,
-                            subscriber: subscriber
-                        })
-                        console.log(participateEvents)
-                        setEvents(participateEvents);
+                        const updatedEvents = [...events];
+                        updatedEvents[selectedEventIndex!] = {
+                            ...updatedEvents[selectedEventIndex!],
+                            subscriber: [...updatedEvents[selectedEventIndex!].subscriber, userId]
+                        };
+                        setEvents(updatedEvents);
                         handleClose();
                         handleOpenConfirmation();
                     } else {
@@ -173,20 +168,12 @@ const HomePage: React.FC<HomePageProps> = ({ authentication }) => {
                         credentials: 'include'
                     });
                     if (response.ok) {
-                        const participateEvents = events.filter((evt) => evt._id !== eventToRemove._id);
-                        const subscriber = eventToRemove.subscriber.filter((sub) => sub !== userId) as String[]
-                        participateEvents.push({
-                            _id: eventToRemove._id,
-                            title: eventToRemove.title,
-                            description: eventToRemove.description,
-                            city: eventToRemove.city,
-                            date: eventToRemove.date,
-                            type: eventToRemove.type,
-                            link: eventToRemove.link,
-                            owner: eventToRemove.owner,
-                            subscriber: subscriber
-                        })
-                        setEvents(participateEvents);
+                        const updatedEvents = [...events];
+                        updatedEvents[selectedEventIndex!] = {
+                            ...updatedEvents[selectedEventIndex!],
+                            subscriber: updatedEvents[selectedEventIndex!].subscriber.filter(sub => sub !== userId)
+                        };
+                        setEvents(updatedEvents);
                         handleCloseRemove();
                         handleOpenConfirmation();
                     } else {
@@ -232,9 +219,9 @@ const HomePage: React.FC<HomePageProps> = ({ authentication }) => {
                             <Button component={Link} to={"/event/" + event._id} size="small">Plus d'informations</Button>
                             {event.subscriber.filter((sub) => sub === authentication.getUserId()).length === 0
                                 ? 
-                                <Button onClick={() => handleOpen(event)} size="small">Participer</Button>
+                                <Button onClick={() => handleOpen(event, index)} size="small">Participer</Button>
                                 :
-                                <Button onClick={() => handleOpenRemove(event)} size="small">Ne pas participer</Button>
+                                <Button onClick={() => handleOpenRemove(event, index)} size="small">Ne pas participer</Button>
                             }
                         </CardActions>
                     </Card>
