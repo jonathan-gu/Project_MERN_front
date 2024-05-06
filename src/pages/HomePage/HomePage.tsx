@@ -232,9 +232,9 @@ const HomePage: React.FC<HomePageProps> = ({ authentication }) => {
                             <Button component={Link} to={"/event/" + event._id} size="small">Plus d'informations</Button>
                             {event.subscriber.filter((sub) => sub === authentication.getUserId()).length === 0
                                 ? 
-                                <Button onClick={() => handleOpen(event)} size="small">Partiper</Button>
+                                <Button onClick={() => handleOpen(event)} size="small">Participer</Button>
                                 :
-                                <Button onClick={() => handleOpenRemove(event)} size="small">Ne pas partiper</Button>
+                                <Button onClick={() => handleOpenRemove(event)} size="small">Ne pas participer</Button>
                             }
                         </CardActions>
                     </Card>

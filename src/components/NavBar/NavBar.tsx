@@ -39,7 +39,7 @@ const NavBar: React.FC<NavBarProps> = ({ isConnected = false, setIsConnected }) 
     setIsConnected(false)
     try {
       const response = await fetch("http://localhost:8080/api/auth/logout", {
-          method: 'POST',
+          method: 'GET',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include'
       });
